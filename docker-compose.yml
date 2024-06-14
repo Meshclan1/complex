@@ -1,0 +1,27 @@
+version: "3"
+services:
+  postgres:
+    image: "postgres:latest"
+    environment:
+      - POSTGRES_PASSWORD=postgres_password
+  redis:
+    image: "redis:latest"
+  server:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./server
+    volumes:
+      - /app/node_modules
+      - ./server:/app
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PGUSER=postgres
+      - PGHOST=postgres
+      - PGDATABASE=postgres
+      - PGPASSWORD=postgres_password
+      - PGPORT=5432
+# 'build' option specifies the build option we want to use e.g. Dockerfile.dev
+# 'context' this specifies where to look for the Dockerfile.dev. In this case, inside the server folder and so we note the path
+# 'volumes' - here, we note the folders we don't want overwritten. In this example, we also look inside the server directory and copy everything into our designated workdir of /app
+# 'environment' means we can set environment variables in the the container when at run time. The env is not encoded in the image during build
